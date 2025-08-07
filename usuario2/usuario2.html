@@ -4,12 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Usuario 2</title>
+    <style>
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        .main-buttons {
+            margin: 20px 0;
+        }
+    </style>
 </head>
 <body>
-    <h1>Bienvenido, Usuario 2</h1>
-    <h2>Ingreso Camión</h2>
-    <button id="addIngresoBtn">Añadir ingreso</button>
-    <div id="ingresoList"></div>
+    <div class="main-buttons">
+        <button id="showIngresoBtn">Gestionar Ingresos</button>
+        <button id="showEgresoBtn">Ver Egresos</button>
+    </div>
+
+    <div id="ingresoSection" class="section">
+        <h2>Ingreso Camión</h2>
+        <button id="addIngresoBtn">Añadir ingreso</button>
+        <div id="ingresoList"></div>
+    </div>
+
+    <div id="egresoSection" class="section">
+        <h2>Registro de Egresos</h2>
+        <div id="egresoList"></div>
+    </div>
     <dialog id="ingresoDialog">
         <form method="dialog" id="ingresoForm">
             <label for="hora">Hora de ingreso:</label>
@@ -21,13 +43,38 @@
         </form>
     </dialog>
     <script>
+        const showIngresoBtn = document.getElementById('showIngresoBtn');
+        const showEgresoBtn = document.getElementById('showEgresoBtn');
+        const ingresoSection = document.getElementById('ingresoSection');
+        const egresoSection = document.getElementById('egresoSection');
         const addIngresoBtn = document.getElementById('addIngresoBtn');
         const ingresoDialog = document.getElementById('ingresoDialog');
         const ingresoForm = document.getElementById('ingresoForm');
         const cancelBtn = document.getElementById('cancelBtn');
         const ingresoList = document.getElementById('ingresoList');
+        const egresoList = document.getElementById('egresoList');
+        
         let ingresos = JSON.parse(localStorage.getItem('ingresos') || '[]');
+        let egresos = JSON.parse(localStorage.getItem('egresos') || '[]');
+        
+        // Mostrar sección de ingresos por defecto
+        ingresoSection.classList.add('active');
+        
+        // Funciones para cambiar entre secciones
+        showIngresoBtn.onclick = () => {
+            ingresoSection.classList.add('active');
+            egresoSection.classList.remove('active');
+            renderIngresos();
+        };
+        
+        showEgresoBtn.onclick = () => {
+            egresoSection.classList.add('active');
+            ingresoSection.classList.remove('active');
+            renderEgresos();
+        };
+        
         renderIngresos();
+        renderEgresos();
 
         addIngresoBtn.onclick = () => ingresoDialog.showModal();
         cancelBtn.onclick = () => ingresoDialog.close();
@@ -45,10 +92,20 @@
 
         function renderIngresos() {
             ingresoList.innerHTML = '';
-            ingresos.forEach((ingreso, idx) => {
+            ingresos.forEach((ingreso) => {
                 const div = document.createElement('div');
                 div.textContent = `Ingreso: ${ingreso.hora} - Día: ${ingreso.fecha}`;
                 ingresoList.appendChild(div);
+            });
+        }
+
+        function renderEgresos() {
+            egresoList.innerHTML = '';
+            egresos = JSON.parse(localStorage.getItem('egresos') || '[]');
+            egresos.forEach((egreso) => {
+                const div = document.createElement('div');
+                div.textContent = `Salida: ${egreso.hora} - Día: ${egreso.fecha}`;
+                egresoList.appendChild(div);
             });
         }
     </script>
