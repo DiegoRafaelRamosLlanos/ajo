@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuario 1</title>
+</head>
+<body>
+    <h2>Egreso Camión</h2>
+    <button id="addEgresoBtn">Añadir egreso</button>
+    <div id="egresoList"></div>
+    <dialog id="egresoDialog">
+        <form method="dialog" id="egresoForm">
+            <label for="hora">Hora de salida:</label>
+            <input type="time" id="hora" name="hora" required><br><br>
+            <label for="fecha">Día de salida:</label>
+            <input type="date" id="fecha" name="fecha" required><br><br>
+            <button type="submit">Guardar</button>
+            <button type="button" id="cancelBtn">Cancelar</button>
+        </form>
+    </dialog>
+    <script>
+        const addEgresoBtn = document.getElementById('addEgresoBtn');
+        const egresoDialog = document.getElementById('egresoDialog');
+        const egresoForm = document.getElementById('egresoForm');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const egresoList = document.getElementById('egresoList');
+        let egresos = JSON.parse(localStorage.getItem('egresos') || '[]');
+        renderEgresos();
+
+        addEgresoBtn.onclick = () => egresoDialog.showModal();
+        cancelBtn.onclick = () => egresoDialog.close();
+
+        egresoForm.onsubmit = function(e) {
+            e.preventDefault();
+            const hora = document.getElementById('hora').value;
+            const fecha = document.getElementById('fecha').value;
+            egresos.push({ hora, fecha });
+            localStorage.setItem('egresos', JSON.stringify(egresos));
+            renderEgresos();
+            egresoDialog.close();
+            egresoForm.reset();
+        };
+
+        function renderEgresos() {
+            egresoList.innerHTML = '';
+            egresos.forEach((egreso, idx) => {
+                const div = document.createElement('div');
+                div.textContent = `Salida: ${egreso.hora} - Día: ${egreso.fecha}`;
+                egresoList.appendChild(div);
+            });
+        }
+    </script>
+</body>
+</html>
